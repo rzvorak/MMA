@@ -1,0 +1,12 @@
+{
+  "LoginPage": {},
+  "LoginForm": {
+    "email": "Email",
+    "email-placeholder": "Enter your email",
+    "password": "Password",
+    "password-placeholder": "Enter your password",
+    "login": "Login",
+    "signup": "Sign Up",
+    "signup-phrase": "Don't have an account?"
+  }
+}

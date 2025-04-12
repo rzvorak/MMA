@@ -1,0 +1,12 @@
+{
+  "LoginPage": {},
+  "LoginForm": {
+    "email": "Email",
+    "email-placeholder": "Tinye email gị",
+    "password": "Okwuntughe",
+    "password-placeholder": "Tinye okwuntughe gị",
+    "login": "Banye",
+    "signup": "Debanye aha",
+    "signup-phrase": "Ị nweghị akaụntụ?"
+  }
+}
