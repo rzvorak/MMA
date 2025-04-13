@@ -2,12 +2,15 @@
   "LoginPage": {},
   "LoginForm": {
     "email": "Email",
-    "email-placeholder": "Tinye email gị",
-    "password": "Okwuntughe",
-    "password-placeholder": "Tinye okwuntughe gị",
-    "login": "Banye",
-    "signup": "Debanye aha",
-    "signup-phrase": "Ị nweghị akaụntụ?"
+    "email-placeholder": "Enter your email",
+    "password": "Password",
+    "password-placeholder": "Enter your password",
+    "login": "Login",
+    "signup": "Sign Up",
+    "signup-phrase": "Don't have an account?",
+    "forgotPassword": "Forgot Password?",
+    "back": "Back to Login",
+    "requestPassword": "Request new password"
   },
   "SignUpPage": {},
   "SignUpForm": {
@@ -23,8 +26,26 @@
     "signup": "Sign Up",
     "login-phrase": "Already have an account?",
 
-    "welcome": "Welcome to Mighty Minds Africa",
-    "confirmation": "check your email for a confirmation",
-    "redirection": "redirecting to login page"
+    "welcome": "Welcome to Mighty Minds Africa!",
+    "confirmation": "Please check your email for a confirmation.",
+    "redirection": "redirecting to login page..."
+  },
+  "ResetPasswordPage": {},
+  "ResetPasswordForm": {
+    "firstName": "First name",
+    "firstName-placeholder": "Enter your first name",
+    "lastName": "Last name",
+    "lastName-placeholder": "Enter your last name",
+    "email": "Email",
+    "email-placeholder": "Enter your email",
+    "password": "Password",
+    "password-placeholder": "Enter your password",
+    "login": "Login",
+    "signup": "Sign Up",
+    "login-phrase": "Already have an account?",
+
+    "welcome": "Welcome to Mighty Minds Africa!",
+    "confirmation": "Please check your email for a confirmation.",
+    "redirection": "redirecting to login page..."
   }
 }

@@ -12,8 +12,10 @@ import Link from "next/link";
 import { signUpAction } from "@/actions/users";
 import { useTranslations } from "next-intl";
 import LogoByTheme from "./LogoByTheme";
+import LanguageSwitcher from "./LanguageSwitcher";
+import DarkModeToggle from "./DarkModeToggle";
 
-const LoginForm = () => {
+const SignUpForm = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -65,79 +67,87 @@ const LoginForm = () => {
       </div>
     </>
   ) : (
-    <form action={handleSubmit} className="w-4/5 max-w-md md:mr-10">
-      <Card className="bg-background w-full max-w-3xl border-none">
-        <CardContent className="grid w-full items-center gap-4">
-          <div>
-            <Label htmlFor="firstName" className="mb-3">
-              {t("firstName")}
-            </Label>
-            <Input
-              id="firstName" // for pairing with htmlFor
-              name="firstName" // for retrieving form data
-              placeholder={t("firstName-placeholder")}
-              type="text" // for special browser recognition
-              required
-              disabled={isPending}
-            ></Input>
-          </div>
-          <div>
-            <Label htmlFor="lastName" className="mb-3">
-              {t("lastName")}
-            </Label>
-            <Input
-              id="lastName"
-              name="lastName"
-              placeholder={t("lastName-placeholder")}
-              type="text"
-              required
-              disabled={isPending}
-            ></Input>
-          </div>
-          <div>
-            <Label htmlFor="email" className="mb-3">
-              {t("email")}
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              placeholder={t("email-placeholder")}
-              type="email"
-              required
-              disabled={isPending}
-            ></Input>
-          </div>
-          <div>
-            <Label htmlFor="password" className="mb-3">
-              {t("password")}
-            </Label>
-            <Input
-              id="password"
-              name="password"
-              placeholder={t("password-placeholder")}
-              type="password"
-              required
-              disabled={isPending}
-            ></Input>
-          </div>
-        </CardContent>
-        <CardFooter className="mt-4 flex flex-col gap-6">
-          <Button className="w-full cursor-pointer">
-            {isPending ? <Loader2 className="animate-spin" /> : t("signup")}
-          </Button>
-          <p className="text-xs">
-            {t("login-phrase")}
-            <Link
-              href="/"
-              className={`ml-1 text-blue-500 underline ${isPending ? "pointer-events-none opacity-5" : ""}`}
-            >
-              {t("login")}
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
-    </form>
+    <>
+      <form action={handleSubmit} className="w-4/5 max-w-md md:mr-10">
+        <Card className="bg-background w-full max-w-3xl border-none">
+          <CardContent className="grid w-full items-center gap-4">
+            <div>
+              <Label htmlFor="firstName" className="mb-3">
+                {t("firstName")}
+              </Label>
+              <Input
+                id="firstName" // for pairing with htmlFor
+                name="firstName" // for retrieving form data
+                placeholder={t("firstName-placeholder")}
+                type="text" // for special browser recognition
+                required
+                disabled={isPending}
+              ></Input>
+            </div>
+            <div>
+              <Label htmlFor="lastName" className="mb-3">
+                {t("lastName")}
+              </Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                placeholder={t("lastName-placeholder")}
+                type="text"
+                required
+                disabled={isPending}
+              ></Input>
+            </div>
+            <div>
+              <Label htmlFor="email" className="mb-3">
+                {t("email")}
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                placeholder={t("email-placeholder")}
+                type="email"
+                required
+                disabled={isPending}
+              ></Input>
+            </div>
+            <div>
+              <Label htmlFor="password" className="mb-3">
+                {t("password")}
+              </Label>
+              <Input
+                id="password"
+                name="password"
+                placeholder={t("password-placeholder")}
+                type="password"
+                required
+                disabled={isPending}
+              ></Input>
+            </div>
+          </CardContent>
+          <CardFooter className="mt-4 flex flex-col gap-6">
+            <Button className="w-full cursor-pointer">
+              {isPending ? <Loader2 className="animate-spin" /> : t("signup")}
+            </Button>
+            <p className="text-xs">
+              {t("login-phrase")}
+              <Link
+                href="/"
+                className={`ml-1 text-blue-500 underline ${isPending ? "pointer-events-none opacity-5" : ""}`}
+              >
+                {t("login")}
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
+      </form>
+
+      <div className="absolute bottom-0 flex h-20 w-full items-center justify-center">
+        <p className="mr-2 text-xs select-none">Mighy Minds Africa © 2025</p>
+        <LanguageSwitcher></LanguageSwitcher>
+        <DarkModeToggle></DarkModeToggle>
+      </div>
+    </>
   );
 };
 
-export default LoginForm;
+export default SignUpForm;

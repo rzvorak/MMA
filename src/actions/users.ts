@@ -4,6 +4,34 @@ import { createClient } from "@/auth/server";
 import { prisma } from "@/db/prisma";
 import { handleError } from "@/lib/utils";
 
+export const resetPasswordAction = async (email: string) => {
+  try {
+    const { auth } = await createClient();
+
+    const { error } = await auth.resetPasswordForEmail(email, {
+      redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
+    });
+
+    if (error) throw error;
+    return { errorMessage: null };
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const updatePasswordAction = async (password: string) => {
+  try {
+    const { auth } = await createClient();
+
+    const { error } = await auth.updateUser({ password });
+
+    if (error) throw error;
+    return { errorMessage: null };
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
 export const loginAction = async (email: string, password: string) => {
   try {
     const { auth } = await createClient();
