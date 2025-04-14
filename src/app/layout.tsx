@@ -5,6 +5,8 @@ import "@/styles/globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Toaster } from "sonner";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,8 +43,12 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider messages={messages}>
-            <div className="flex min-h-screen w-full flex-col">{children}</div>
-            <Toaster />
+            <SidebarProvider>
+              <div className="flex min-h-screen w-full flex-col">
+                {children}
+              </div>
+              <Toaster />
+            </SidebarProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

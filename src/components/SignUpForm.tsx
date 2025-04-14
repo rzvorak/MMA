@@ -129,7 +129,7 @@ const SignUpForm = () => {
               {isPending ? <Loader2 className="animate-spin" /> : t("signup")}
             </Button>
             <p className="text-xs">
-              {t("login-phrase")}
+              {!isPending ? t("login-phrase") : ""}
               <Link
                 href="/"
                 className={`ml-1 text-blue-500 underline ${isPending ? "pointer-events-none opacity-5" : ""}`}
