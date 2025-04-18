@@ -10,7 +10,7 @@
     "signup-phrase": "Don't have an account?",
     "forgotPassword": "Forgot Password?",
     "back": "Back to Login",
-    "requestPassword": "Request new password"
+    "requestPassword": "Send link"
   },
   "SignUpPage": {},
   "SignUpForm": {
@@ -21,6 +21,7 @@
     "email": "Email",
     "email-placeholder": "Enter your email",
     "password": "Password",
+    "confirmPassword": "Confirm Password",
     "password-placeholder": "Enter your password",
     "login": "Login",
     "signup": "Sign Up",
@@ -32,20 +33,17 @@
   },
   "ResetPasswordPage": {},
   "ResetPasswordForm": {
-    "firstName": "First name",
-    "firstName-placeholder": "Enter your first name",
-    "lastName": "Last name",
-    "lastName-placeholder": "Enter your last name",
-    "email": "Email",
-    "email-placeholder": "Enter your email",
-    "password": "Password",
-    "password-placeholder": "Enter your password",
-    "login": "Login",
-    "signup": "Sign Up",
+    "password": "New Password",
+    "password-placeholder": "Enter new password",
+
     "login-phrase": "Already have an account?",
 
     "welcome": "Welcome to Mighty Minds Africa!",
     "confirmation": "Please check your email for a confirmation.",
-    "redirection": "redirecting to login page..."
+    "redirection": "redirecting to login page...",
+
+    "confirmPassword": "Save New Password",
+    "retypePassword": "Retype Password",
+    "back": "Back to Login"
   }
 }

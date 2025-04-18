@@ -27,12 +27,15 @@ const SignUpForm = () => {
     startTransition(async () => {
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
+      const confirmPassword = formData.get("confirmPassword") as string;
       const firstName = formData.get("firstName") as string;
       const lastName = formData.get("lastName") as string;
 
-      let errorMessage = (
-        await signUpAction(email, password, firstName, lastName)
-      ).errorMessage;
+      let errorMessage =
+        confirmPassword === password
+          ? (await signUpAction(email, password, firstName, lastName))
+              .errorMessage
+          : "Passwords don't match";
 
       if (!errorMessage) {
         setConfirming(true);
@@ -117,6 +120,19 @@ const SignUpForm = () => {
               <Input
                 id="password"
                 name="password"
+                placeholder={t("password-placeholder")}
+                type="password"
+                required
+                disabled={isPending}
+              ></Input>
+            </div>
+            <div>
+              <Label htmlFor="confirmPassword" className="mb-3">
+                {t("confirmPassword")}
+              </Label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
                 placeholder={t("password-placeholder")}
                 type="password"
                 required

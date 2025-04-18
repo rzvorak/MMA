@@ -3,16 +3,12 @@ import DarkModeToggle from "@/components/DarkModeToggle";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import React from "react";
 
-const HomePage = () => {
+const ProfilePage = () => {
   return (
     <>
-      <AppSidebar />
-      <div className="flex min-h-screen w-full flex-col">
-        <SidebarTrigger></SidebarTrigger>
-        <DarkModeToggle></DarkModeToggle>
-      </div>
+      <div>profile</div>
     </>
   );
 };
 
-export default HomePage;
+export default ProfilePage;

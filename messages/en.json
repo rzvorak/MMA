@@ -21,6 +21,7 @@
     "email": "Email",
     "email-placeholder": "Enter your email",
     "password": "Password",
+    "confirmPassword": "Confirm Password",
     "password-placeholder": "Enter your password",
     "login": "Login",
     "signup": "Sign Up",

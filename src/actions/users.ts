@@ -4,6 +4,19 @@ import { createClient } from "@/auth/server";
 import { prisma } from "@/db/prisma";
 import { handleError } from "@/lib/utils";
 
+export const getUser = async () => {
+  const { auth } = await createClient();
+
+  const userObject = await auth.getUser();
+
+  if (userObject.error) {
+    console.error(userObject.error);
+    return null;
+  }
+
+  return userObject.data.user;
+};
+
 export const resetPasswordAction = async (email: string) => {
   try {
     const { auth } = await createClient();

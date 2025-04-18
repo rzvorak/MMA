@@ -5,7 +5,7 @@ import "@/styles/globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Toaster } from "sonner";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 
 const geistSans = Geist({
@@ -44,9 +44,7 @@ export default async function RootLayout({
         >
           <NextIntlClientProvider messages={messages}>
             <SidebarProvider>
-              <div className="flex min-h-screen w-full flex-col">
-                {children}
-              </div>
+              {children}
               <Toaster />
             </SidebarProvider>
           </NextIntlClientProvider>
