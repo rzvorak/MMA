@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { getUser } from "@/actions/users";
 import { prisma } from "@/db/prisma";
+import Header from "@/components/Header";
 
 const ProfilePage = async () => {
   const user = await getUser();
@@ -37,33 +38,11 @@ const ProfilePage = async () => {
     <>
       <AppSidebar />
       <div className="flex min-h-screen w-full flex-col pb-10">
-        {/* header */}
-        <div className="flex flex-col justify-center p-4 font-semibold">
-          <div className="mb-3 flex w-full flex-row items-center justify-center">
-            <div className="flex-1 justify-start">
-              <Button
-                asChild
-                size="icon"
-                className="visible md:hidden"
-                variant="ghost"
-              >
-                <SidebarTrigger></SidebarTrigger>
-              </Button>
-            </div>
-            <h3 className="flex-1 text-center">Profile</h3>
-            <div className="flex flex-1 flex-row justify-end">
-              <DarkModeToggle></DarkModeToggle>
-              <Button size="icon" variant="ghost">
-                <Settings />
-              </Button>
-            </div>
-          </div>
-          <div className="bg-secondary h-[0.2rem] w-full"></div>
-        </div>
+        <Header title="Profile" />
 
         {/* content */}
         <div className="flex w-full flex-row">
-          <div className="flex flex-2 flex-col pr-12 pl-4">
+          <div className="flex flex-2 flex-col pr-4 pl-4 lg:pr-12">
             <div className="mb-4 flex flex-row">
               <div className="flex flex-1 flex-col items-center py-4">
                 <div className="size-[10rem] sm:size-[12rem] md:size-[14rem]">
@@ -117,8 +96,12 @@ const ProfilePage = async () => {
           <div className="invisible absolute mr-4 flex flex-1 flex-col lg:visible lg:relative">
             <Tabs defaultValue="account" className="">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="account">Following</TabsTrigger>
-                <TabsTrigger value="password">Followers</TabsTrigger>
+                <TabsTrigger value="account" className="cursor-pointer">
+                  Following
+                </TabsTrigger>
+                <TabsTrigger value="password" className="cursor-pointer">
+                  Followers
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="account">
                 <Card>

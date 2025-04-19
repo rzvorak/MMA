@@ -2,7 +2,7 @@
 
 import React from "react";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { Crown, Home, Inbox, ListTodo, Search } from "lucide-react";
+import { Calendar, Crown, Home, Inbox, ListTodo, Search } from "lucide-react";
 import Link from "next/link";
 
 const items = [
@@ -30,6 +30,11 @@ const items = [
     title: "Tasks",
     url: "#",
     icon: <ListTodo />,
+  },
+  {
+    title: "Meetings",
+    url: "/meetings",
+    icon: <Calendar />,
   },
 ];
 
