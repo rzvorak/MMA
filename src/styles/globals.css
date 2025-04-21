@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@theme {
+  --breakpoint-xs: 30rem;
+}
+
 /* shadcn's auto-generated postcss setup*/
 @custom-variant dark (&:is(.dark *));
 

@@ -45,7 +45,7 @@ const ProfilePage = async () => {
           <div className="flex flex-2 flex-col pr-4 pl-4 lg:pr-12">
             <div className="mb-4 flex flex-row">
               <div className="flex flex-1 flex-col items-center py-4">
-                <div className="size-[10rem] sm:size-[12rem] md:size-[14rem]">
+                <div className="size-[7rem] xs:size-[10rem] sm:size-[12rem] md:size-[13rem]">
                   <Avatar>
                     <AvatarImage src="#" />
                     <AvatarFallback className="bg-sidebar-accent">
@@ -56,15 +56,15 @@ const ProfilePage = async () => {
                 </div>
               </div>
               <div className="mb-5 flex flex-1 flex-col justify-center md:ml-6">
-                <h1 className="text-foreground mt-4 text-2xl">
+                <h1 className="text-foreground mt-4 text-lg xs:text-2xl">
                   {firstName} {lastName}
                 </h1>
-                <h2 className="text-muted-foreground text-lg">{email}</h2>
-                <h3 className="text-muted-foreground text-md">
+                <h2 className="text-muted-foreground text-sm xs:text-lg">{email}</h2>
+                <h3 className="text-muted-foreground text-xs xs:text-md">
                   Joined {month} {year}
                 </h3>
 
-                <h3 className="text-muted-foreground text-md mt-4">
+                <h3 className="text-muted-foreground text-xs xs:text-md mt-4">
                   0 Followers 0 Folllowing
                 </h3>
               </div>

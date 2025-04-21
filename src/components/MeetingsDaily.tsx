@@ -79,7 +79,7 @@ const MeetingsDaily = ({ date }: Props) => {
       <CardContent className="flex max-h-full w-full flex-col px-0">
         <ScrollArea className="m-0 h-[30rem] w-full border">
           <div onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
-            {buttonStates.keys().map((time, i) => (
+            {Array.from(buttonStates.keys()).map((time, i) => (
               <div
                 key={i}
                 onMouseDown={() => handleMouseDown(time)}
