@@ -78,8 +78,6 @@ const SidebarProfile = ({ firstName, lastName, email }: Props) => {
             Profile
           </DropdownMenuItem>
         </Link>
-        <DropdownMenuItem className="cursor-pointer">Billing</DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">Team</DropdownMenuItem>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild className="w-full">

@@ -17,17 +17,6 @@ export const getUser = async () => {
   return userObject.data.user;
 };
 
-export const getAllMentors = async () => {
-  try {
-    const mentors = await prisma.user.findMany({
-      where: { role: "MENTOR" },
-    });
-    return mentors;
-  } catch (error) {
-    return handleError(error);
-  }
-};
-
 export const resetPasswordAction = async (email: string) => {
   try {
     const { auth } = await createClient();

@@ -19,38 +19,24 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getAllMentors } from "@/actions/users";
+import { Role } from "@prisma/client";
 
-const MeetingsContent = () => {
+type Props = {
+  mentors: {
+    firstName: string;
+    id: string;
+    role: Role;
+    email: string;
+    lastName: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }[];
+};
+
+const MeetingsContent = ({ mentors }: Props) => {
   const [date, setDate] = React.useState<Date | undefined>(undefined);
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
-
-  const mentors = getAllMentors();
-  console.log("mentors: " + mentors);
-
-  const frameworks = [
-    {
-      value: "next.js",
-      label: "Next.js",
-    },
-    {
-      value: "sveltekit",
-      label: "SvelteKit",
-    },
-    {
-      value: "nuxt.js",
-      label: "Nuxt.js",
-    },
-    {
-      value: "remix",
-      label: "Remix",
-    },
-    {
-      value: "astro",
-      label: "Astro",
-    },
-  ];
 
   return (
     <div className="flex w-full flex-1 flex-col px-4">
@@ -64,37 +50,50 @@ const MeetingsContent = () => {
           />
 
           <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
+            <PopoverTrigger className="mt-4 w-full" asChild>
               <Button
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className="w-[200px] justify-between"
+                className="w-4/5 justify-between"
               >
                 {value
-                  ? frameworks.find((framework) => framework.value === value)
-                      ?.label
-                  : "Select framework..."}
+                  ? (() => {
+                      const mentor = mentors.find(
+                        (mentor) =>
+                          mentor.firstName + " " + mentor.lastName === value,
+                      );
+                      return mentor
+                        ? mentor.firstName + " " + mentor.lastName
+                        : "Select a mentor";
+                    })()
+                  : "Select a mentor"}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
               <Command>
-                <CommandInput placeholder="Search framework..." />
+                <CommandInput placeholder="Search mentors..." />
                 <CommandList>
-                  <CommandEmpty>No framework found.</CommandEmpty>
+                  <CommandEmpty>No mentor found.</CommandEmpty>
                   <CommandGroup>
-                    {frameworks.map((framework) => (
+                    {mentors.map((mentor) => (
                       <CommandItem
-                        key={framework.value}
-                        value={framework.value}
+                        key={mentor.id}
+                        value={mentor.firstName + " " + mentor.lastName}
                         onSelect={(currentValue) => {
                           setValue(currentValue === value ? "" : currentValue);
                           setOpen(false);
                         }}
                       >
-                        <Check />
-                        {framework.label}
+                        {mentor.firstName + " " + mentor.lastName}
+                        <Check
+                          className={
+                            value === mentor.firstName + " " + mentor.lastName
+                              ? "ml-auto opacity-100"
+                              : "ml-auto opacity-0"
+                          }
+                        />
                       </CommandItem>
                     ))}
                   </CommandGroup>

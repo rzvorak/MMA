@@ -2,7 +2,7 @@
 
 import React from "react";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { Calendar, Crown, Home, Inbox, ListTodo, Search } from "lucide-react";
+import { Calendar, Crown, Home, Inbox, ListTodo, Pencil, Search } from "lucide-react";
 import Link from "next/link";
 
 const items = [
@@ -35,6 +35,11 @@ const items = [
     title: "Meetings",
     url: "/meetings",
     icon: <Calendar />,
+  },
+  {
+    title: "Create",
+    url: "/create",
+    icon: <Pencil />,
   },
 ];
 
