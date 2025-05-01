@@ -3,30 +3,27 @@
 import { createClient } from "@/auth/server";
 import { prisma } from "@/db/prisma";
 import { handleError } from "@/lib/utils";
-import { supabase } from "@/lib/supabaseClient";
+import { getUser } from "./users";
+import {v4 as uuidv4} from "uuid";
 
 export const uploadImage = async (file: File) => {
     try {
-        const filePath = `images/${Date.now()}_${file.name}`;
+        const client = await createClient();
+        const user = await getUser();
 
-        // Upload file to Supabase storage
-        const { data, error } = await supabase.storage
-            .from("images")
-            .upload(filePath, file, {
-                cacheControl: "3600",
-                upsert: false,
-            });
-
-        // Debugging: Check if there was an error or if data is returned
-        if (error) {
-            console.error('Upload error:', error);
-            throw error;
+        if (!user) {
+            throw new Error("User not found");
         }
 
-        console.log('Upload success:', data); // Check what data you get back after upload
+        const filePath = `${user.id}/${uuidv4()}`;
 
-        // Get the public URL of the uploaded file
-        const { data: urlData} = supabase.storage
+        const { data, error } = await client.storage
+            .from("images")
+            .upload(filePath, file);
+
+        if (error) throw error;
+
+        const { data: urlData} = client.storage
             .from("images")
             .getPublicUrl(filePath);
 
@@ -34,13 +31,64 @@ export const uploadImage = async (file: File) => {
             console.error('Error fetching public URL:');
         }
 
-        console.log('Public URL:', urlData?.publicUrl); // Debug the public URL
-        return urlData?.publicUrl; // Return the public URL
+        return urlData?.publicUrl; 
     } catch (error) {
-        handleError(error); // Handle any errors that may occur
-        return undefined;
+        handleError(error);
+        return null;
     }
 };
+
+export const getImages = async () => {
+    try {
+        const client = await createClient();
+        const user = await getUser();
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const { data, error } = await client.storage
+            .from("images")
+            .list(user.id, {
+                limit: 100,
+                offset: 0,
+                sortBy: { column: "name", order: "asc" },
+            });
+
+        if (error) throw error;
+
+        const urls = data.map((image) => {
+            const {data} = client.storage
+                .from("images")
+                .getPublicUrl(`${user.id}/${image.name}`);
+            return data?.publicUrl;
+        })
+
+        return urls || [];
+    } catch (error) {
+        handleError(error);
+        return null;
+    }
+}
+
+export const deleteImage = async (imageName: string) => {
+    try {
+        const client = await createClient();
+        const user = await getUser();
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const { error } = await client.storage
+            .from("images")
+            .remove([`${user.id}/${imageName}`]);
+
+    } catch (error) {
+        handleError(error);
+        return null;
+    }
+}
 
 
 

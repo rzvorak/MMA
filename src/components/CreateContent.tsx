@@ -3,9 +3,7 @@
 import React, { startTransition, useState, useTransition } from "react";
 import { Toggle } from "@/components/ui/toggle";
 import { Button } from "@/components/ui/button";
-import { Camera, Video, Text, MessageCircle } from "lucide-react";
-
-
+import { Camera, Video, Text, MessageCircle, Loader2 } from "lucide-react";
 import {
     Dialog,
     DialogClose,
@@ -18,45 +16,17 @@ import {
   } from "@/components/ui/dialog"
 import { Input } from "./ui/input";
 import { toast } from "sonner";
-import { uploadImage } from "@/actions/create";
+import { getImages, uploadImage, deleteImage } from "@/actions/create";
+import Image from "next/image";
 
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-  } from "@/components/ui/form"
 
-// import { z } from "zod";
-// import { useForm } from "react-hook-form";
-// import { zodResolver } from "@hookform/resolvers/zod";
-
-// const imageUploadSchema = z.object({
-//     file: z.instanceof(File).refine((file) => {
-//         const acceptedFileTypes = ["image/jpeg", "image/png", "image/gif"];
-//         return acceptedFileTypes.includes(file.type);
-//     }, {
-//         message: "Invalid file type. Only .jpg, .png, and .gif are allowed.",
-//     }),
-// })
   
 const CreateContent = () => {
     const [isPending, startTransition] = useTransition();
-
-    // const imageForm = useForm<z.infer<typeof imageUploadSchema>>({
-    //     resolver: zodResolver(imageUploadSchema),
-    //     defaultValues: {
-    //         file: undefined,
-    //     },
-    // })
+    const [currrentImage, setCurrentImage] = useState<string | null>(null);
 
     const handleSubmitImage = (file: File | null) => {
         startTransition(async () => {
-
-            console.log('made it here')
 
             if (!file) {
                 toast("Please select a file to upload.");
@@ -64,26 +34,53 @@ const CreateContent = () => {
             }
 
             const imageUrl = await uploadImage(file);
-
-            console.log(imageUrl);
     
             if (imageUrl) {
               toast("Image uploaded successfully: " + imageUrl);
             } else {
               toast("Error uploading image");
             }
-          });
+
+            const images = await getImages()
+
+            setCurrentImage(images ? images[0] : null)
+            setImageFile(null)
+
+        });
     };
+
+    const handleDeleteImage = (imageUrl: string) => {
+        startTransition(async () => {
+            const imageName = imageUrl.split("/").pop()
+
+            if (!imageName) {
+                toast("Error deleting image: Image name not found.");
+                return;
+            }
+
+            await deleteImage(imageName)
+            setCurrentImage(null)
+
+            toast("Image deleted successfully: " + imageName);
+        });
+    }
 
     const [imageFile, setImageFile] = useState<File | null>(null); 
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0]; 
     
-        if (selectedFile) {       
+        if (selectedFile) {
+          // this is a double check       
+          if (!selectedFile.name.endsWith(".png") 
+            && !selectedFile.name.endsWith(".jpg") 
+            && !selectedFile.name.endsWith(".jpeg")) {
+            toast("Please select a valid image file.");
+            return;
+          }
           setImageFile(selectedFile); 
         }
-      };
+    };
 
 
   return (
@@ -120,20 +117,24 @@ const CreateContent = () => {
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>Upload Image</DialogTitle>
-
-                                    <Input type="file" onChange={handleFileChange} />
-
-
+                                    <Input 
+                                        type="file" 
+                                        onChange={handleImageFileChange} 
+                                        className="mt-2 cursor-pointer"
+                                        disabled={isPending}
+                                        accept=".jpg, .jpeg, .png"
+                                    />
                                 <DialogDescription>
-                                    Accepted file types: .jpg, .png, .gif
+                                    Accepted file types: .jpg, .jpeg, .png
                                 </DialogDescription>
                                 <DialogFooter>
                                     <DialogClose asChild>
                                         <Button 
                                             className="w-full cursor-pointer mt-4"
                                             onClick={() => handleSubmitImage(imageFile)}
+                                            disabled={isPending || !imageFile}
                                         >
-                                            Upload
+                                            {isPending ? <Loader2 className="animate-spin" /> : "Upload"}
                                         </Button>
                                     </DialogClose>
                                 </DialogFooter>
@@ -176,7 +177,14 @@ const CreateContent = () => {
             
         </div>
         <div className="flex flex-1 flex-col justify-center">
-            
+            {imageFile ? imageFile.name : "No file selected"}
+
+            {currrentImage ?             
+            <>
+                <img src={currrentImage} alt="image" width={500} height={500}/>
+                <Button onClick={() => handleDeleteImage(currrentImage)} >Delete</Button>
+            </>
+            : null}
         </div>
       </div>
       
