@@ -15,9 +15,23 @@ import {
     DialogTrigger,
   } from "@/components/ui/dialog"
 import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 import { toast } from "sonner";
 import { getImages, uploadImage, deleteImage } from "@/actions/create";
 import Image from "next/image";
+
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+  } from "@/components/ui/form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
 
   
@@ -82,6 +96,27 @@ const CreateContent = () => {
         }
     };
 
+    const TextFormSchema = z.object({
+        text: z
+          .string()
+          .min(0, {
+            message: "Text must be at least 10 characters.",
+          })
+          .max(1000, {
+            message: "Text must not be longer than 1000 characters.",
+          }),
+      })
+
+    const form = useForm<z.infer<typeof TextFormSchema>>({
+        resolver: zodResolver(TextFormSchema),
+      })
+
+    const handleSubmitText = (data: z.infer<typeof TextFormSchema>) => {
+        console.log(JSON.stringify(data.text, null, 2));
+    }
+
+    const currentTextInput = form.watch("text") || ""
+
 
   return (
     <div className="flex w-full flex-1 flex-col px-4">
@@ -117,51 +152,97 @@ const CreateContent = () => {
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>Upload Image</DialogTitle>
-                                    <Input 
-                                        type="file" 
-                                        onChange={handleImageFileChange} 
-                                        className="mt-2 cursor-pointer"
-                                        disabled={isPending}
-                                        accept=".jpg, .jpeg, .png"
-                                    />
+                            
+                                <Input 
+                                    type="file" 
+                                    onChange={handleImageFileChange} 
+                                    className="mt-2 cursor-pointer"
+                                    disabled={isPending}
+                                    accept=".jpg, .jpeg, .png"
+                                />
                                 <DialogDescription>
                                     Accepted file types: .jpg, .jpeg, .png
                                 </DialogDescription>
-                                <DialogFooter>
-                                    <DialogClose asChild>
-                                        <Button 
-                                            className="w-full cursor-pointer mt-4"
-                                            onClick={() => handleSubmitImage(imageFile)}
-                                            disabled={isPending || !imageFile}
-                                        >
-                                            {isPending ? <Loader2 className="animate-spin" /> : "Upload"}
-                                        </Button>
-                                    </DialogClose>
-                                </DialogFooter>
                             </DialogHeader>
+                            <DialogFooter>
+                                <DialogClose asChild>
+                                    <Button 
+                                        className="w-full cursor-pointer mt-4"
+                                        onClick={() => handleSubmitImage(imageFile)}
+                                        disabled={isPending || !imageFile}
+                                    >
+                                        {isPending ? <Loader2 className="animate-spin" /> : "Upload"}
+                                    </Button>
+                                </DialogClose>
+                            </DialogFooter>
                         </DialogContent>
-
             </Dialog>
 
             <Dialog>
                 <DialogTrigger asChild>
                     <Button variant="outline" className="cursor-pointer w-full" size="lg">
-                        Text
+                        Add Text
                         <Text />
                     </Button>
                 </DialogTrigger>
 
-                
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Upload Text</DialogTitle>
-                            <Input type="file" className="mt-2 cursor-pointer"  />
-                            <DialogDescription>
-                                
-                            </DialogDescription>
-                        </DialogHeader>
-                    </DialogContent>
-                
+                <DialogContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(handleSubmitText)}>
+                            <DialogHeader>
+                                <DialogTitle>Add Text</DialogTitle>
+                                    <FormField
+                                        control={form.control}
+                                        name="text"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormControl>
+                                                    <Textarea
+                                                        placeholder="Type your text here..."
+                                                        className="resize-none mt-2 h-[12rem]"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormDescription >
+                                                    {currentTextInput.length} / 1000 |   This can be a blog post, caption, announcement, etc.
+                                                </FormDescription>
+
+                                            </FormItem>
+                                        )}
+                                    />
+                            </DialogHeader>
+                            <DialogFooter>
+                                <div className="w-full flex flex-row gap-4">
+
+                                    <Button 
+                                        variant="outline" 
+                                        className="flex-1 cursor-pointer mt-4" 
+                                        onClick={() => form.reset({text: ""})}
+                                    >
+                                        {isPending ? <Loader2 className="animate-spin" /> : "Clear"}
+                                    </Button>
+
+
+                                <DialogClose asChild>
+                                    <Button 
+                                        className="flex-1 cursor-pointer mt-4"
+                                        type="submit"
+                                        disabled={isPending 
+                                            || !currentTextInput 
+                                            || currentTextInput.length < 10
+                                            || currentTextInput.length > 1000}
+                                    >
+                                        {isPending ? <Loader2 className="animate-spin" /> : "Upload"}
+                                    </Button>
+                                </DialogClose>
+
+
+                                </div>
+
+                            </DialogFooter>
+                        </form>
+                    </Form>
+                </DialogContent>
             </Dialog>
 
 
