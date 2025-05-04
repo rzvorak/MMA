@@ -20,6 +20,7 @@ import {
 
 import { toast } from "sonner";
 import { getImages, uploadImage, deleteImage } from "@/actions/create";
+import { uploadVideo } from "@/actions/createBrowser";
 import Image from "next/image";
 
 import {
@@ -32,7 +33,7 @@ import {
     FormMessage,
   } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { set, useForm } from "react-hook-form"
 import { z } from "zod"
 import { Card } from "../../components/ui/card";
 
@@ -59,12 +60,21 @@ import {v4 as uuidv4} from 'uuid'
 export type postItem = {
     id: string;
     content: string;
-    type: "image" | "text" | "header" | "video" | "survey" | "quiz";
+    type: "image" 
+        | "text" 
+        | "header" 
+        | "video" 
+        | "survey" 
+        | "quiz" 
+        | "youtube";
 }
   
 const CreateContent = () => {
     const [isPending, startTransition] = useTransition();
     const [imageFile, setImageFile] = useState<File | null>(null); 
+    const [videoFile, setVideoFile] = useState<File | null>(null); 
+    const [youtubeLink, setYoutubeLink] = useState<string>("");
+
 
     const handleSubmitImage = (file: File | null) => {
         startTransition(async () => {
@@ -87,6 +97,31 @@ const CreateContent = () => {
             ])
             
             setImageFile(null)
+
+        });
+    };
+
+    const handleSubmitVideo= (file: File | null) => {
+        startTransition(async () => {
+
+            if (!file) {
+                toast("Please select a file to upload.");
+                return;
+            }
+
+            const videoUrl = await uploadVideo(file);
+
+            if (!videoUrl) {
+                toast("Error uploading video.");
+                return;
+            }
+
+            setPostItems((prev) => [
+                ...prev,
+                {id: uuidv4(), content: videoUrl, type: "video"}
+            ])
+            
+            setVideoFile(null)
 
         });
     };
@@ -118,6 +153,20 @@ const CreateContent = () => {
             return;
           }
           setImageFile(selectedFile); 
+        }
+    };
+
+    const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0]; 
+    
+        if (selectedFile) {
+          // this is a double check       
+          if (!selectedFile.name.endsWith(".mov") 
+            && !selectedFile.name.endsWith(".mp4")) {
+            toast("Please select a valid video file.");
+            return;
+          }
+          setVideoFile(selectedFile); 
         }
     };
 
@@ -158,7 +207,7 @@ const CreateContent = () => {
     const currentTextInput = textForm.watch("text") || ""
     const currentHeaderInput = headerForm.watch("header") || ""
 
-    const [postItems, setPostItems] = useState<postItem[]>([{id: "test", content: "See your post here...", type: "header"}]);
+    const [postItems, setPostItems] = useState<postItem[]>([{id: "test", content: "QIyc6NKS5J0", type: "youtube"}]);
 
 
     const sensors = useSensors(
@@ -189,22 +238,51 @@ const CreateContent = () => {
                 {/* video */}
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button variant="outline" className="cursor-pointer w-full" size="lg">
+                        <Button variant="outline" className="w-full cursor-pointer" size="lg">
                             Add Video
-                            <ScrollText />
+                            <Video />
                         </Button>
                     </DialogTrigger>
 
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Add Video</DialogTitle>
+                            <DialogTitle>Upload Video</DialogTitle>
+                        
+                            <Input 
+                                type="file" 
+                                onChange={handleVideoFileChange} 
+                                className="mt-2 cursor-pointer"
+                                disabled={isPending}
+                                accept=".mov, .mp4"
+                            />
+                            <DialogDescription>
+                                Accepted file types: .mov, .mp4
+                            </DialogDescription>
+
+                            <div className="w-full flex justify-center text-muted-foreground">
+                                <p>- OR -</p>
+                            </div>
+
+                            <Input 
+                                type="text"
+                                value={youtubeLink}
+                                onChange={(e) => setYoutubeLink(e.target.value)} 
+                                className="mt-2"
+                                disabled={isPending}
+                                accept=".mov, .mp4"
+                            />
+                            <DialogDescription>
+                                Copy and paste a YouTube link here.
+                            </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
                             <DialogClose asChild>
                                 <Button 
-                                    className="flex-1 cursor-pointer mt-4"
+                                    className="w-full cursor-pointer mt-4"
+                                    onClick={() => handleSubmitVideo(videoFile)}
+                                    disabled={isPending || !videoFile}
                                 >
-                                    {isPending ? <Loader2 className="animate-spin" /> : "Save"}
+                                    {isPending ? <Loader2 className="animate-spin" /> : "Upload"}
                                 </Button>
                             </DialogClose>
                         </DialogFooter>
@@ -220,33 +298,33 @@ const CreateContent = () => {
                         </Button>
                     </DialogTrigger>
 
-                            <DialogContent>
-                                <DialogHeader>
-                                    <DialogTitle>Upload Image</DialogTitle>
-                                
-                                    <Input 
-                                        type="file" 
-                                        onChange={handleImageFileChange} 
-                                        className="mt-2 cursor-pointer"
-                                        disabled={isPending}
-                                        accept=".jpg, .jpeg, .png"
-                                    />
-                                    <DialogDescription>
-                                        Accepted file types: .jpg, .jpeg, .png
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter>
-                                    <DialogClose asChild>
-                                        <Button 
-                                            className="w-full cursor-pointer mt-4"
-                                            onClick={() => handleSubmitImage(imageFile)}
-                                            disabled={isPending || !imageFile}
-                                        >
-                                            {isPending ? <Loader2 className="animate-spin" /> : "Upload"}
-                                        </Button>
-                                    </DialogClose>
-                                </DialogFooter>
-                            </DialogContent>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Upload Image</DialogTitle>
+                        
+                            <Input 
+                                type="file" 
+                                onChange={handleImageFileChange} 
+                                className="mt-2 cursor-pointer"
+                                disabled={isPending}
+                                accept=".jpg, .jpeg, .png"
+                            />
+                            <DialogDescription>
+                                Accepted file types: .jpg, .jpeg, .png
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button 
+                                    className="w-full cursor-pointer mt-4"
+                                    onClick={() => handleSubmitImage(imageFile)}
+                                    disabled={isPending || !imageFile}
+                                >
+                                    {isPending ? <Loader2 className="animate-spin" /> : "Upload"}
+                                </Button>
+                            </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
                 </Dialog>
 
                 {/* text */}
