@@ -14,6 +14,7 @@ export function SortableItem(props: postItem) {
     setNodeRef,
     transform,
     transition,
+    isDragging,
   } = useSortable({id: props.id});
   
   const style = {
@@ -23,7 +24,7 @@ export function SortableItem(props: postItem) {
   
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <div className="h-auto w-full cursor-pointer flex py-2 px-2 items-center ">
+      <div className={`${isDragging ? 'opacity-0' : ''} h-auto w-full cursor-pointer flex py-2 px-2 items-center `}>
 
         {props.type === 'image' ? 
           // eventually make this a next/image component

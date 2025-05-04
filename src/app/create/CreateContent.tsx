@@ -38,7 +38,8 @@ import { z } from "zod"
 import { Card } from "../../components/ui/card";
 
 import {
-    DndContext, 
+    DndContext,
+    DragOverlay,
     closestCenter,
     KeyboardSensor,
     PointerSensor,
@@ -56,6 +57,7 @@ import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-
 import {SortableItem} from './SortableItem';
 import { ScrollArea } from "../../components/ui/scroll-area";
 import {v4 as uuidv4} from 'uuid'
+import { extractYouTubeID } from "@/lib/youtube";
 
 export type postItem = {
     id: string;
@@ -126,6 +128,24 @@ const CreateContent = () => {
         });
     };
 
+    const handleSubmitYoutube = (link: string) => {
+        startTransition(async () => {
+            const youtubeId = extractYouTubeID(link);
+
+            if (!youtubeId) {
+                toast("Error uploading video.");
+                return;
+            }
+
+            setPostItems((prev) => [
+                ...prev,
+                {id: uuidv4(), content: youtubeId, type: "youtube"}
+            ])
+            
+            setYoutubeLink("")
+        });
+    }
+
     const handleDeleteImage = (imageUrl: string) => {
         startTransition(async () => {
             const imageName = imageUrl.split("/").pop()
@@ -171,7 +191,7 @@ const CreateContent = () => {
     };
 
     const TextSchema = z.object({
-        text: z.string().min(10).max(1000),
+        text: z.string().min(1).max(1000),
       });
       
       const HeaderSchema = z.object({
@@ -207,7 +227,7 @@ const CreateContent = () => {
     const currentTextInput = textForm.watch("text") || ""
     const currentHeaderInput = headerForm.watch("header") || ""
 
-    const [postItems, setPostItems] = useState<postItem[]>([{id: "test", content: "QIyc6NKS5J0", type: "youtube"}]);
+    const [postItems, setPostItems] = useState<postItem[]>([{id: "test", content: "See your post here...", type: "header"}]);
 
 
     const sensors = useSensors(
@@ -217,26 +237,45 @@ const CreateContent = () => {
         })
       );
 
-      function handleDragEnd(event: { active: any; over: any; }) {
+    const [activeItem, setActiveItem] = useState<postItem | null>(null);
+
+    function handleDragEnd(event: { active: any; over: any; }) {
         const { active, over } = event;
         if (active.id !== over.id) {
-          setPostItems((items) => {
+        setPostItems((items) => {
             const oldIndex = items.findIndex(i => i.id === active.id);
             const newIndex = items.findIndex(i => i.id === over.id);
             return arrayMove(items, oldIndex, newIndex);
-          });
+        });
         }
-      }
+        setActiveItem(null);
+    }
+
+    function handleDragStart(event: { active: any; }) {
+        const draggedItem = postItems.find((item) => item.id === event.active.id);
+        setActiveItem(draggedItem || null);
+    }
+
+
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
 
   return (
     <div className="flex w-full flex-1 flex-col px-4 h-auto">
       <div className="xs:gap-2 xs:flex-col md:flex-row flex h-full flex-col gap-8">
-        <div className="flex flex-col h-auto items-center">
+        <div className="flex flex-col flex-1 items-center">
 
             <div className="grid grid-cols-3 md:grid-cols-1 w-full">
                 {/* video */}
-                <Dialog>
+                <Dialog open={isVideoOpen} onOpenChange={(open) => {
+                    setIsVideoOpen(open);
+
+                    if (!open) {
+                        setVideoFile(null);
+                        setYoutubeLink("");
+                    }
+                    
+                }}>
                     <DialogTrigger asChild>
                         <Button variant="outline" className="w-full cursor-pointer" size="lg">
                             Add Video
@@ -249,14 +288,14 @@ const CreateContent = () => {
                             <DialogTitle>Upload Video</DialogTitle>
                         
                             <Input 
-                                type="file" 
+                                type="file"
                                 onChange={handleVideoFileChange} 
                                 className="mt-2 cursor-pointer"
-                                disabled={isPending}
-                                accept=".mov, .mp4"
+                                disabled={isPending || youtubeLink.length > 0}
+                                accept=".MOV, .mp4"
                             />
                             <DialogDescription>
-                                Accepted file types: .mov, .mp4
+                                Accepted file types: .MOV, .mp4
                             </DialogDescription>
 
                             <div className="w-full flex justify-center text-muted-foreground">
@@ -268,7 +307,7 @@ const CreateContent = () => {
                                 value={youtubeLink}
                                 onChange={(e) => setYoutubeLink(e.target.value)} 
                                 className="mt-2"
-                                disabled={isPending}
+                                disabled={isPending || videoFile !== null}
                                 accept=".mov, .mp4"
                             />
                             <DialogDescription>
@@ -279,8 +318,12 @@ const CreateContent = () => {
                             <DialogClose asChild>
                                 <Button 
                                     className="w-full cursor-pointer mt-4"
-                                    onClick={() => handleSubmitVideo(videoFile)}
-                                    disabled={isPending || !videoFile}
+                                    onClick={() => {
+                                        youtubeLink.length > 0 
+                                            ? handleSubmitYoutube(youtubeLink)
+                                            : handleSubmitVideo(videoFile)
+                                    }}
+                                    disabled={isPending || (!videoFile && !youtubeLink)}
                                 >
                                     {isPending ? <Loader2 className="animate-spin" /> : "Upload"}
                                 </Button>
@@ -379,7 +422,7 @@ const CreateContent = () => {
                                             type="submit"
                                             disabled={isPending 
                                                 || !currentTextInput 
-                                                || currentTextInput.length < 10
+                                                || currentTextInput.length < 1
                                                 || currentTextInput.length > 1000}
                                         >
                                             {isPending ? <Loader2 className="animate-spin" /> : "Upload"}
@@ -539,35 +582,42 @@ const CreateContent = () => {
             </div>
         </div>
         
-        <ScrollArea className="max-h-115 md:w-2/3 mt-2 md:mt-0">
-            <div className="h-full flex-col justify-center">
+
+            <div className="h-full md:w-2/3 flex-col justify-center mt-2 md:mt-0">
                 <Card className="w-full rounded-none bg-background py-1">
                     <ScrollArea className="h-full w-full ">
                         <DndContext 
                             sensors={sensors}
                             collisionDetection={closestCenter}
+                            onDragStart={handleDragStart}
                             onDragEnd={handleDragEnd}
                             modifiers={[restrictToVerticalAxis, restrictToFirstScrollableAncestor]}
                         >
-                            <SortableContext 
-                                items={postItems.map(item => item.id)}
-                                strategy={verticalListSortingStrategy}
-                            >
-                                {postItems.map(item => 
-                                    <SortableItem 
-                                        key={item.id} 
-                                        id={item.id} 
-                                        content={item.content}
-                                        type={item.type}
-                                    />
-                                )}
-                            </SortableContext>
+
+                                <SortableContext 
+                                    items={postItems.map(item => item.id)}
+                                    strategy={verticalListSortingStrategy}
+                                >
+                                    {postItems.map(item => 
+                                        <SortableItem 
+                                            key={item.id} 
+                                            id={item.id} 
+                                            content={item.content}
+                                            type={item.type}
+                                        />
+                                    )}
+                                </SortableContext>
+
+                                <DragOverlay dropAnimation={null}>
+                                    {activeItem ? (
+                                    <SortableItem id={activeItem.id} content={activeItem.content} type={activeItem.type} />
+                                    ) : null}
+                                </DragOverlay>
                         </DndContext>
                     </ScrollArea>
                 </Card>
                 
             </div>
-        </ScrollArea>
       </div>
     </div>
   );
