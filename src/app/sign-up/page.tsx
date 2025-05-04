@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import SignUpForm from "@/components/SignUpForm";
+import SignUpForm from "@/app/sign-up/SignUpForm";
 
 export default function SignUpPage() {
   const t = useTranslations("SignUpPage");

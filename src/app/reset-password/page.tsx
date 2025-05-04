@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import ResetPasswordForm from "@/components/ResetPasswordForm";
+import ResetPasswordForm from "@/app/reset-password/ResetPasswordForm";
 
 export default function ResetPasswordPage() {
   const t = useTranslations("ResetPasswordPage");

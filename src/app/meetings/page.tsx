@@ -1,7 +1,7 @@
 //import { getAllMentors } from "@/actions/users";
 import { AppSidebar } from "@/components/AppSidebar";
 import Header from "@/components/Header";
-import MeetingsContent from "@/components/MeetingsContent";
+import MeetingsContent from "@/app/meetings/MeetingsContent";
 import { prisma } from "@/db/prisma";
 import React from "react";
 

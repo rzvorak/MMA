@@ -3,16 +3,16 @@
 import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Card, CardContent, CardFooter } from "./ui/card";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+import { Card, CardContent, CardFooter } from "../../components/ui/card";
+import { Label } from "../../components/ui/label";
+import { Input } from "../../components/ui/input";
 import { Loader2 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../../components/ui/button";
 import Link from "next/link";
 import { updatePasswordAction } from "@/actions/users";
 import { useTranslations } from "next-intl";
-import LanguageSwitcher from "./LanguageSwitcher";
-import DarkModeToggle from "./DarkModeToggle";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
+import DarkModeToggle from "../../components/DarkModeToggle";
 
 const ResetPasswordForm = () => {
   const router = useRouter();
